@@ -4,32 +4,41 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <netinet/in.h>
 #include <sys/types.h>
 
 #define CERT_FILE "keys/cacert.pem"
 #define KEY_FILE "keys/cakey.pem"
 
-static void tlsReadMany(struct tls* context, void** buf, size_t* l) {
-  size_t cap = 256;
-  size_t size = 0;
-  size_t read;
-  char tbuf[256];
-  void* buffer = malloc(cap);
-  do {
-    read = tls_read(context, tbuf, 256);
-    if (read == TLS_WANT_POLLIN || read == TLS_WANT_POLLOUT)
-      continue;
-    assert(read != -1);
-    if (read + size > cap) {
-      while (read + size > cap) cap <<= 1;
-      buffer = realloc(buffer, cap);
-    }
-    memcpy(((char*) buffer) + size, tbuf, read);
-    size += read;
-  } while (read > 0);
-  *buf = buffer;
-  *l = size;
+static const char* CREATE_TABLES_QUERY =
+  "CREATE TABLE IF NOT EXISTS "
+  "Threads("
+  "  threadID INTEGER PRIMARY KEY ASC,"
+  "  title STRING NOT NULL,"
+  "  board INTEGER NOT NULL"
+  ");"
+  "CREATE INDEX IF NOT EXISTS "
+  "  threadsByBoard ON Threads (board);"
+  "CREATE TABLE IF NOT EXISTS "
+  "Posts("
+  "  postID INTEGER PRIMARY KEY ASC,"
+  "  thread INTEGER NOT NULL,"
+  "  name STRING,"
+  "  content STRING,"
+  "  date INTEGER"
+  ");"
+  "CREATE INDEX IF NOT EXISTS "
+  "  postsByThread ON Posts (thread);"
+  ;
+
+static int createTables(sqlite3* context) {
+  return sqlite3_exec(
+    context,
+    CREATE_TABLES_QUERY,
+    NULL, NULL,
+    NULL 
+  );
 }
 
 void ServerState_initialise(ServerState* state) {
@@ -85,12 +94,19 @@ void ServerState_initialise(ServerState* state) {
     exit(-1);
   }
   state->sock = fd;
+  stat = sqlite3_open("\\", &(state->db));
+  if (stat != SQLITE_OK) {
+    fprintf(stderr, "Could not open SQLite3 database: error %d\n", stat);
+    exit(-1);
+  }
+  createTables(state->db);
 }
 
 void ServerState_destroy(ServerState* state) {
   tls_close(state->context);
   tls_free(state->context);
   tls_config_free(state->config);
+  sqlite3_close(state->db);
 }
 
 void ServerState_listenOnce(ServerState* state) {

@@ -13,7 +13,15 @@ INCLUDE(./dependencies.cmake)
 SET(UUSHT_executable_SRCS
   ${PROJECT_SOURCE_DIR}/src/main.c
   ${PROJECT_SOURCE_DIR}/src/serverstate.c
+  ${PROJECT_SOURCE_DIR}/src/db.c
+  ${PROJECT_SOURCE_DIR}/src/sha2.c
+  ${PROJECT_SOURCE_DIR}/src/http.c
+  ${PROJECT_SOURCE_DIR}/src/sockutil.c
 )
+
+SET_SOURCE_FILES_PROPERTIES(
+  ${PROJECT_SOURCE_DIR}/src/sha2.c
+  PROPERTIES COMPILE_FLAGS -fno-strict-aliasing)
 
 include_directories(${PROJECT_BINARY_DIR})
 include_directories(${PROJECT_INCLUDE_DIR})

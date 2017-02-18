@@ -25,7 +25,7 @@ endif(NOT CMAKE_BUILD_TYPE)
 # initialiser list, even when it's more readable to initialise it in the constructor
 # body.
 SET(COMMON_FLAGS "-std=c++14 -Wall -Wpedantic -Wextra -Werror -fno-builtin")
-SET(COMMON_FLAGS_C "-std=c11 -Wall -Wpedantic -Wextra -Werror -fno-builtin")
+SET(COMMON_FLAGS_C "-std=c11 -Wall -Wpedantic -Wextra -Werror -fno-builtin -DBYTE_ORDER=LITTLE_ENDIAN")
 
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${COMMON_FLAGS} -O2 -g")
 SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${COMMON_FLAGS} -O3 -ffat-lto-objects -flto")
