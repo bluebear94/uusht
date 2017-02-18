@@ -17,6 +17,7 @@ SET(UUSHT_executable_SRCS
   ${PROJECT_SOURCE_DIR}/src/sha2.c
   ${PROJECT_SOURCE_DIR}/src/http.c
   ${PROJECT_SOURCE_DIR}/src/sockutil.c
+  ${PROJECT_SOURCE_DIR}/src/strutil.c
 )
 
 SET_SOURCE_FILES_PROPERTIES(

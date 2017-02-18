@@ -13,23 +13,23 @@
 
 static const char* CREATE_TABLES_QUERY =
   "CREATE TABLE IF NOT EXISTS "
-  "Threads("
-  "  threadID INTEGER PRIMARY KEY ASC,"
-  "  title STRING NOT NULL,"
-  "  board INTEGER NOT NULL"
+  "T(" // Threads
+  "  z INTEGER PRIMARY KEY ASC," // threadID
+  "  y STRING NOT NULL," // title
+  "  x INTEGER NOT NULL" // board
   ");"
   "CREATE INDEX IF NOT EXISTS "
-  "  threadsByBoard ON Threads (board);"
+  "  AA ON T (x);"
   "CREATE TABLE IF NOT EXISTS "
-  "Posts("
-  "  postID INTEGER PRIMARY KEY ASC,"
-  "  thread INTEGER NOT NULL,"
-  "  name STRING,"
-  "  content STRING,"
-  "  date INTEGER"
+  "P(" // Posts
+  "  z INTEGER PRIMARY KEY ASC," // postID
+  "  y INTEGER NOT NULL," // thread
+  "  x STRING," // name
+  "  w STRING," // content
+  "  v INTEGER" // date
   ");"
   "CREATE INDEX IF NOT EXISTS "
-  "  postsByThread ON Posts (thread);"
+  "  AB ON P (y);"
   ;
 
 static int createTables(sqlite3* context) {
